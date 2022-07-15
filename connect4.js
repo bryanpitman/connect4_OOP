@@ -28,8 +28,9 @@ class Game {
     // put functions in constructor if you want to call it immediately
     this.makeBoard();
     this.makeHtmlBoard();
+
   }
-  
+
   makeBoard() {
     for (let y = 0; y < this.height; y++) { // does this.height work?
       this.board.push(Array.from({ length: this.width })); // ^ for this.width?
@@ -38,30 +39,30 @@ class Game {
 
   makeHtmlBoard() {
     const board = document.getElementById('board');
-  
+
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
     top.setAttribute('id', 'column-top');
-    top.addEventListener('click', handleClick);
-  
+    top.addEventListener('click', this.handleClick.bind(this));
+
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
       headCell.setAttribute('id', x);
       top.append(headCell);
     }
-  
+
     board.append(top);
-  
+
     // make main part of board
     for (let y = 0; y < this.height; y++) {
       const row = document.createElement('tr');
-  
+
       for (let x = 0; x < this.width; x++) {
         const cell = document.createElement('td');
         cell.setAttribute('id', `${y}-${x}`);
         row.append(cell);
       }
-  
+
       board.append(row);
     }
   }
@@ -69,32 +70,35 @@ class Game {
   // event listener will need bind
 
   handleClick(evt) {
+
+
     // have to put this in front of this for the event listener
     // get x from ID of clicked cell
+
     const x = +evt.target.id;
-  
+
     // get next spot in column (if none, ignore click)
     const y = this.findSpotForCol(x);
     // have to put this in front of findSpotForCol because we want to call it now!
-    
+
     if (y === null) {
       return;
     }
-  
+
     // place piece in board and add to HTML table
     this.board[y][x] = this.currPlayer;
-    placeInTable(y, x);
-    
+    this.placeInTable(y, x);
+
     // check for win
-    if (checkForWin()) {
-      return endGame(`Player ${this.currPlayer} won!`);
+    if (this.checkForWin()) {
+      return this.endGame(`Player ${this.currPlayer} won!`);
     }
-    
+
     // check for tie
     if (this.board.every(row => row.every(cell => cell))) {
-      return endGame('Tie!');
+      return this.endGame('Tie!');
     }
-      
+
     // switch players
     this.currPlayer = this.currPlayer === 1 ? 2 : 1;
   }
@@ -113,7 +117,7 @@ class Game {
     piece.classList.add('piece');
     piece.classList.add(`p${this.currPlayer}`);
     piece.style.top = -50 * (y + 2);
-  
+
     const spot = document.getElementById(`${y}-${x}`);
     spot.append(piece);
   }
@@ -123,7 +127,7 @@ class Game {
   }
 
   checkForWin() {
-    function _win(cells) {
+     const _win = (cells) => {
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
@@ -141,7 +145,7 @@ class Game {
         const vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
         const diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
         const diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
-  
+
         // find winner (only checking each win-possibility as needed)
         if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
           return true;
@@ -246,17 +250,17 @@ new Game(6, 7);
   // place piece in board and add to HTML table
   board[y][x] = currPlayer;
   placeInTable(y, x);
-  
+
   // check for win
   if (checkForWin()) {
     return endGame(`Player ${currPlayer} won!`);
   }
-  
+
   // check for tie
   if (board.every(row => row.every(cell => cell))) {
     return endGame('Tie!');
   }
-    
+
   // switch players
   currPlayer = currPlayer === 1 ? 2 : 1;
 } */
