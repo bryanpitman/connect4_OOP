@@ -23,6 +23,8 @@ class Game {
     this.player = [1, 2];
     this.currPlayer = 1;
     this.board = [];
+    this.button = document.querySelector(".button");
+
     // execute functions in the constructor
     // when you put new Class, it will CALL THE CONSTRUCTOR
     // put functions in constructor if you want to call it immediately
@@ -155,8 +157,12 @@ class Game {
   }
 }
 
-new Game(6, 7);
+let button = document.querySelector(".button");
+button.addEventListener("click", function() {
+  location.reload() 
+})
 
+new Game(6,7);
 
 // const WIDTH = 7;
 // const HEIGHT = 6;
