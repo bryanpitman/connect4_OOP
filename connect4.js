@@ -107,6 +107,7 @@ class Game {
     }
 
     // switch players
+    console.log(this.players)
     this.currPlayer = this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
   }
 
@@ -137,13 +138,13 @@ class Game {
     let top = document.querySelector("#column-top");
     top.removeEventListener('click', this.handleClick);
     // removing event listener with this.handleClick.bind(this) does not work because it is an anonymous function that
-    // can't be repeated. (it works in addEventListener but not remove) 
+    // can't be repeated. (it works in addEventListener but not remove)
     // so you have to set this.handleClick.bind(this) to a variable in constructor
     alert(msg);
   }
 
   checkForWin() {
-     const _win = (cells) => {
+     const _win = (cells) => { //arrow function to keep this value from above 
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
