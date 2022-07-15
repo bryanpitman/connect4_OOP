@@ -17,13 +17,16 @@
 // FOR EVERY METHOD THAT CALLS ANOTHER METHOD INSIDE A CLASS IT MUST BE PRECEEDED WITH KEYWORD THIS.
 
 class Game {
-  constructor(height= 6, width= 7) {
+  constructor(p1, p2, height= 6, width= 7) {
     this.height = height;
     this.width = width;
-    this.player = [1, 2];
-    this.currPlayer = 1;
+    this.players = [p1, p2];
+    this.currPlayer = p1;
     this.board = [];
+    this.handleClick = this.handleClick.bind(this);
     this.button = document.querySelector(".button");
+
+    // had an error because we put this.handleClick() here, but we don't want to run that function at start
 
     // execute functions in the constructor
     // when you put new Class, it will CALL THE CONSTRUCTOR
@@ -41,11 +44,13 @@ class Game {
 
   makeHtmlBoard() {
     const board = document.getElementById('board');
+    board.innerHTML = '';
+    // this will reset the HTML board to start from scratch again!
 
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
     top.setAttribute('id', 'column-top');
-    top.addEventListener('click', this.handleClick.bind(this));
+    top.addEventListener('click', this.handleClick);
 
     for (let x = 0; x < this.width; x++) {
       const headCell = document.createElement('td');
@@ -93,7 +98,7 @@ class Game {
 
     // check for win
     if (this.checkForWin()) {
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`${this.currPlayer.color} player won!`);
     }
 
     // check for tie
@@ -102,7 +107,7 @@ class Game {
     }
 
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer === this.players[0] ? this.players[1] : this.players[0];
   }
 
   findSpotForCol(x) {
@@ -117,14 +122,23 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+  //  piece.classList.add(`p${this.currPlayer}`);   don't need this anymore because we don't have the background color in css, it's in JS now
+    piece.style.background = this.currPlayer.color
     piece.style.top = -50 * (y + 2);
+    // only assigning background color to one player right now
+    // this was happening because the logic for changing currPlayer was based on a number,
+    // instead of it being p1 or p2. the logic was changed in line 110
 
     const spot = document.getElementById(`${y}-${x}`);
     spot.append(piece);
   }
 
   endGame(msg) {
+    let top = document.querySelector("#column-top");
+    top.removeEventListener('click', this.handleClick);
+    // removing event listener with this.handleClick.bind(this) does not work because it is an anonymous function that
+    // can't be repeated. (it works in addEventListener but not remove) 
+    // so you have to set this.handleClick.bind(this) to a variable in constructor
     alert(msg);
   }
 
@@ -159,10 +173,18 @@ class Game {
 
 let button = document.querySelector(".button");
 button.addEventListener("click", function() {
-  location.reload() 
+  let p1 = new Player(document.querySelector("#p1").value);
+  let p2 = new Player(document.querySelector("#p2").value);
+  new Game(p1, p2)
 })
 
-new Game(6,7);
+class Player {
+  constructor(color) {
+    this.color = color;
+  }
+}
+
+
 
 // const WIDTH = 7;
 // const HEIGHT = 6;
